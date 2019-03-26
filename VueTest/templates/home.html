@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta id="token" name="token" value="{{ csrf_token }}">
+    <meta charset="utf-8">
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A collection of created IT Tickets">
+		
+		<meta name="keywords" content="vuejs, django, crudapp, restapi">
+		<!-- w3schools (carosel) -->
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- bootstap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	  <link rel="stylesheet" type="text/css" href="/static/css/tickets.css">
+	  <link rel="stylesheet" href="/static/css/colorScheme.css">
+		<style>
+		img.one {
+			height:55%;
+			width: 55%;
+		}
+		img.two {
+			height: 50%;
+			width: 50%;
+		}
+		img.three {
+			height: 45%;
+			width: 45%;
+		}
+
+		img.slide1 {
+			height:800px;
+			width: 100%;
+		}
+		img.slide2 {
+			height: 800px;
+			width: 100%; 
+		}
+		img.slide3 {
+			height: 800px;
+			width: 100%;
+		}
+		</style>
+	<!-- W3Schools -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<nav class="navbar navbar-expand-lg navbar-dark nav-color">
+			<a class="navbar-brand" href="{% url 'showHome' %}">SU2SD</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                {% if user.is_authenticated %}
+                <div class="collapse navbar-collapse" id="navbarText">
+                    <ul class="navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showAboutUs' %}">About Us</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showBenefits' %}">Benefits</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showEntries' %}">Entries</a>
+                            </li>
+                            {% if user.groups.all.0.name == "Admin" %}
+                            <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'showTeacherView' %}">Admin View</a>
+                            </li>
+                            {% endif %}		
+                    </ul>
+                        <ul class="navbar-nav">  
+                                <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Account
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{% url 'showUserInfo' user.id %}">My Profile</a>
+                                </li>   
+                                
+                                <li class="nav-item float-right">
+                                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                                </li>
+                        </ul>
+                </div>
+                {% else %}
+                <div class="collapse navbar-collapse" id="navbarText">
+                    <ul class="navbar-nav mr-auto">
+                            <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'showAboutUs' %}">About Us</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showBenefits' %}">Benefits</a>
+                            </li>
+                    </ul>
+                    <ul class="navbar-nav float-right">     
+                            <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                            <a class="nav-link" href="{% url 'signup' %}">Sign-Up</a>
+                            </li>
+                    </ul>
+                </div>
+					{% endif %}
+			</nav>
+  </head>
+  <body>
+				<div id = "starting">
+					<div class = "container-fluid">
+							{% if user.is_authenticated %}
+
+								<h2 v-if="announcementList.length > 0">Announcements</h2><!--Announcement section -->
+								<div class="alert alert-primary alert-dismissible fade show" role="alert" v-for="announcement in announcementList">
+									<div class="card" >
+										<h5 class="card-header">${ announcement.announcement_title }</h5>
+										<div class="card-body">
+											<p class="card-text">${ announcement.announcement_text }</p>
+											<a href="#" class="btn btn-link">Go to Full Announcement</a>
+										</div>
+										<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								</div>
+							{% endif %}
+						<!-- -First slide- -->
+						<div class = "row">
+							<div class = "col test">
+							<div class="mySlides w3-display-container w3-center">
+									<img src="/static/assets/slide_1.jpg" class="slide1">
+									<!-- <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
+										<h3>Kicking Back</h3>
+										<p><b>Relaxing while blowing off work is like nothing else</b></p>   
+									</div> -->
+								</div>
+								<div class="mySlides w3-display-container w3-center">
+									<img src="/static/assets/slide_2.jpg" class="slide2">
+									<!-- <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
+										<h3>John Tron</h3>
+										<p><b>Where would we be without this legend? Probably in a better world</b></p>    
+									</div> -->
+								</div>
+								<div class="mySlides w3-display-container w3-center">
+									<img src="/static/assets/slide_3.jpg" class="slide3">
+									<!-- <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
+										<h3>Our Boi Trump</h3>
+										<p><b>Wouldnt be a filler slide show without our boi trump</b></p>    
+									</div> -->
+								</div>
+								</div>
+							</div>
+								<br>
+								<br>
+						<div class = "row">
+							<div class = "col">
+								<div class="jumbotron jumbotron-fluid nav-color text-white">
+									<center><h1 class="display-3">${energySaved} wH</h1></center>
+									<center><p class="lead">We as a group have walked a total of ${ energySaved } watt hours ever since the start of this project on January 31 of 2019, this includes ${ stepsTotal } steps that have been taken, and ${ floorsTotal } floors walked</p></center>
+									<!-- <hr class="my-4">
+									<p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+									<a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a> -->
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="container">
+						<div class = "row">
+							<div class = "col-4">
+								<center>
+								<div class="card border-purple" style="width: 18rem;">
+									<center><img class="card-img-top one" src="/static/assets/stairs2.png" alt="Card image cap" width="50%"></center>
+									<div class="card-body red-bg">
+										<h5 class="card-title">TRACK YOUR FLOORS</h5>
+										<p class="card-text">Using an iphone or android app, take the sum of the amount of floors climbed. This can be found in the iPhone "Health" app, and other android applications found in the google play store.</p>
+										<!---<a href="#" class="btn btn-primary">Go somewhere</a>--->
+									</div>
+								</div>
+							</center>
+							</div>
+							<div class = "col-4">
+								<center>
+									<div class="card border-purple" style="width: 18rem;">
+										<center><img class="card-img-top two" src="/static/assets/steps.jpg" alt="Card image cap"></center>
+										<div class="card-body red-bg">
+											<h5 class="card-title">TRACK YOUR STEPS</h5>
+											<p class="card-text">If you are unable to track your steps using an external device, count the amount of stairs you go up, write it down, and keep it safe. Once you have the sum of your steps, multiply it by 2.</p>
+											<!---<a href="#" class="btn btn-primary">Go somewhere</a>--->
+										</div>
+									</div>
+									</center>
+								</div>
+								<div class = "col-4">
+									<center>
+									<div class="card border-purple" style="width: 18rem;">
+										<center><img class="card-img-top three" src="/static/assets/calendar.png" alt="Card image cap"></center>
+										<div class="card-body red-bg">
+											<h5 class="card-title">PUT YOUR DATA IN THE TABLE</h5>
+											<p class="card-text">Located on the site, the table of data is available. Put your name down, and type the amount of floors in the floor column. The steps and calories will automatically be calculated. If you need help a video tutorial is located below.</p>
+											<!---<a href="#" class="btn btn-primary">Go somewhere</a>--->
+										</div>
+									</div>
+									</center>
+								</div>
+						</div>
+						<a class="twitter-timeline" href="https://twitter.com/ScaleStep?ref_src=twsrc%5Etfw">Tweets by ScaleStep</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+					</div>
+				</div>
+				<script>
+						// Automatic Slideshow - change image every 4 seconds
+						var myIndex = 0;
+						carousel();
+						
+						function carousel() {
+							var i;
+							var x = document.getElementsByClassName("mySlides");
+							for (i = 0; i < x.length; i++) {
+								x[i].style.display = "none";  
+							}
+							myIndex++;
+							if (myIndex > x.length) {myIndex = 1}    
+							x[myIndex-1].style.display = "block";  
+							setTimeout(carousel, 6000);    
+						}
+						
+						// When the user clicks anywhere outside of the modal, close it
+						// var modal = document.getElementById('ticketModal');
+						// window.onclick = function(event) {
+						// 	if (event.target == modal) {
+						// 		modal.style.display = "none";
+						// 	}
+						// }
+						</script>
+
+				<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+				<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+				<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+		
+				<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+				<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+				<script type="text/javascript" src="static/js/home.js"></script>
+				
+  </body>
+</html> 

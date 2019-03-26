@@ -1,0 +1,22 @@
+.nav-color {
+    background-color: #49277E;
+  }
+.red-bg {
+    background-color: #EA3F33;
+}
+.border-purple{
+    border-style: solid;
+    border-color: #49277E;
+}
+.red-text-color {
+    color: #EA3F33;
+}
+.purple-text-color {
+    color: #49277E;
+}
+.white-text-color {
+    color: #FFFFFF;
+}
+.black-bg {
+    background-color: #1a1a1a;
+}

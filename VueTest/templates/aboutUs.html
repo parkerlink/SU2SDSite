@@ -1,0 +1,140 @@
+<html>
+    <head>
+        <!-- CSS for bootstrap -->
+                <!-- w3schools (carosel) -->
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- bootstap -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="/static/css/colorScheme.css">
+        <style>
+        img.logo {
+            width: 364;
+            height: 500;
+        }
+        
+        </style>
+        <nav class="navbar navbar-expand-lg navbar-dark nav-color">
+                <a class="navbar-brand" href="{% url 'showHome' %}">SU2SD</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    {% if user.is_authenticated %}
+                    <div class="collapse navbar-collapse" id="navbarText">
+                        <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'showAboutUs' %}">About Us</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'showBenefits' %}">Benefits</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'showEntries' %}">Entries</a>
+                                </li>
+                                {% if user.groups.all.0.name == "Admin" %}
+                                <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'showTeacherView' %}">Admin View</a>
+                                </li>
+                                {% endif %}		
+                        </ul>
+                            <ul class="navbar-nav">  
+                                    <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Account
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{% url 'showUserInfo' user.id %}">My Profile</a>
+                                    </li>   
+                                    
+                                    <li class="nav-item float-right">
+                                            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                                    </li>
+                            </ul>
+                    </div>
+                    {% else %}
+                    <div class="collapse navbar-collapse" id="navbarText">
+                        <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'showAboutUs' %}">About Us</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'showBenefits' %}">Benefits</a>
+                                </li>
+                        </ul>
+                        <ul class="navbar-nav float-right">     
+                                <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                                <a class="nav-link" href="{% url 'signup' %}">Sign-Up</a>
+                                </li>
+                        </ul>
+                    </div>
+                        {% endif %}
+                </nav>
+    </head>
+    <body>
+        <div id= "aboutUsPage">
+            <div class = "container">
+                <br>
+                <div class="jumbotron bg-light border-top border-left">
+                    <center><h1 class="display-4 purple-text-color">What is SU2SD?</h1>
+                    <p class="lead red-text-color">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p></center>
+                </div>
+                <center><img class= "logo"  src="/static/assets/Logo.jpg"></center>
+                <div class = "row"> 
+                    <div class="col-8">
+                        <div class="jumbotron bg-light border-left">
+                            <center><h1 class="display-4 purple-text-color">About Dr. S</h1>
+                            <p class="lead red-text-color">Leszek J. Sibilski is a Professor of Sociology and longtime advocate for issues related to climate change, and the environment in contemporary society. He is a former member of the Polish National Olympic Cycling Team. Dr. Sibilski earned a master’s degree in Education and Sport Science from the Academy of Sport and Physical Education in Poznan, Poland. He earned his Ph.D., in Sociology in Social Inclusion and Social Movements from the Jagiellonian University in Cracow. In the past, he taught physical education at the elementary and high school level. Dr. Sibilski led a campaign to promote a UN Resolution for World Bicycle Day. As result of his efforts, on April 12, 2018 the United Nations General Assembly declared June 3 as the World Bicycle Day. He is a proud finisher of the 1994 and 2014 New York City Marathon.</p></center>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <center><img src="https://static.wixstatic.com/media/9db5e0_822bc71e0422447cbc54181d62b2ce16~mv2.jpg/v1/fill/w_332,h_511,fp_0.54_0.29,lg_1,q_80/9db5e0_822bc71e0422447cbc54181d62b2ce16~mv2.webp"></center>
+                    </div>
+                </div>
+                <div class = "row"> 
+                    <div class="col-5">
+                        <center><img src="https://static.wixstatic.com/media/9db5e0_fe4cc3edd05145d0ae1baec608dcd2ef~mv2.jpg/v1/fill/w_415,h_560,al_c,q_80,usm_0.66_1.00_0.01/DyxJu3MX0AIsMUt_edited.webp"></center>
+                    </div>
+                    <div class="col-7">
+                        <div class="jumbotron bg-light border-right">
+                            <center><h1 class="display-4 purple-text-color">About Andrew Howe</h1>
+                            <p class="lead red-text-color">My name is Andrew Howe (How) and I am a freshman attending Montgomery College. I previously attended Gaithersburg High School. Here at Montgomery College, I major in mechanical engineering. The discipline of engineering involves a large amount of problem solving and when I first heard of this movement I knew I had to take a step up and improve it. It began with sheets of paper and now involves a large spreadsheet open to the public.</p></center>
+                        </div>
+                    </div>
+                </div>
+                <div class = "row"> 
+                        <div class="col-7">
+                            <div class="jumbotron bg-light border-right">
+                                <center><h1 class="display-4 purple-text-color">About Parker Link</h1>
+                                <p class="lead red-text-color">My name is Parker Link and I work as a Web Developer at the Institute of Bioscience and Biotechnology Research. I plan on attending Montgomery College and taking classes to increase my skills as a programmer and developer. Andrew came to me with an idea and ever since we both have strived to making this project the best it can be.</p></center>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                                <center><img src="/static/assets/image1 (1).jpeg"></center>
+                            </div>
+                    </div>
+                <!-- <form action="https://formspree.io/parkerlink2000@gmail.com" method="POST" />
+                    Name:<br>
+                    <input type="text" name="name"><br>
+                    E-mail:<br>
+                    <input type="text" name="mail"><br>
+                    Comment:<br>
+                    <input type="text" name="comment" size="50"><br><br>
+                    <input type="submit" value="Send">
+                    <input type="reset" value="Reset">
+                </form>     -->
+
+            </div>
+            </div>
+        </div>
+        <!-- Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+
+</html>

@@ -1,0 +1,95 @@
+<html>
+    <head>
+    <title>Sign-Up</title>
+    <link rel="stylesheet" href="/static/css/colorScheme.css">
+    <!-- w3schools (carosel) -->
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- bootstap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/css/tickets.css">
+
+    <nav class="navbar navbar-expand-lg navbar-dark nav-color">
+                <a class="navbar-brand" href="{% url 'showHome' %}">SU2SD</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                {% if user.is_authenticated %}
+                <div class="collapse navbar-collapse" id="navbarText">
+                        <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showAboutUs' %}">About Us</a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showBenefits' %}">Benefits</a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showEntries' %}">Entries</a>
+                                </li>
+                                {% if user.groups.all.0.name == "Admin" %}
+                                <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'showTeacherView' %}">Admin View</a>
+                                </li>
+                                {% endif %}		
+                        </ul>
+                        <ul class="navbar-nav">  
+                                <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Account
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{% url 'showUserInfo' user.id %}">My Profile</a>
+                                </li>   
+                                
+                                <li class="nav-item float-right">
+                                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                                </li>
+                        </ul>
+                </div>
+                {% else %}
+                <div class="collapse navbar-collapse" id="navbarText">
+                        <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'showAboutUs' %}">About Us</a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showBenefits' %}">Benefits</a>
+                                </li>
+                        </ul>
+                        <ul class="navbar-nav float-right">     
+                                <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                                <a class="nav-link" href="{% url 'signup' %}">Sign-Up</a>
+                                </li>
+                        </ul>
+                </div>
+                {% endif %}
+        </nav>
+    </head>
+    <body>
+    <div class="container">
+                
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <p>
+                {{ field.label_tag }}<br>
+                {{ field }}
+                {% if field.help_text %}
+                    <small style="color: grey">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
+                </p>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+    </div>
+    </body>
+</html>

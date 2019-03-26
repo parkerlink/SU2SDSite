@@ -1,0 +1,365 @@
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <title>Dashboard</title>
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <meta name="description" content="All the content you need all in one place">
+	    <meta id="token2" name="token" value="{{ csrf_token }}">
+	    <meta name="keywords" content="vuejs, django, crudapp, restapi">
+	    <!-- bootstap -->
+	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css">
+	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    	<link rel="stylesheet" type="text/css" href="/static/css/tickets.css">
+
+	     <script src="https://unpkg.com/vue"></script>
+	    <style>
+		    .dash{
+			    margin: 10px 0;
+			    font-size: large;
+			}
+		</style>
+	</head>
+
+	<body>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+					<a class="navbar-brand" href="{% url 'showHome' %}">SU2SD</a>
+						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+							<span class="navbar-toggler-icon"></span>
+						</button>
+						
+						{% if user.is_authenticated %}
+						<div class="collapse navbar-collapse" id="navbarText">
+							<ul class="navbar-nav mr-auto">
+								<li class="nav-item">
+									<!--<a class="nav-link" href="{% url 'showDash' %}">Dashboard</a>-->
+														</li>
+														<li class="nav-item">
+																		<a class="nav-link" href="{% url 'showDash' %}">About Us</a>
+														</li>
+														<li class="nav-item">
+																		<a class="nav-link" href="{% url 'showEntries' %}">Entries</a>
+																</li>
+								<li class="nav-item">
+									<a class="nav-link" href="/admin">Admin</a>
+								</li>
+							</ul>
+
+							 <ul class="navbar-nav">  
+										 <li class="nav-item dropdown">
+											<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													Account
+											</a>
+											<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+													<a class="dropdown-item" href="{% url 'showUserInfo' user.id %}">My Profile</a>
+													<!-- <a class="dropdown-item" href="{% url 'showActivity' user.id %}">My Forms</a> -->
+											</div>
+											</li>   
+											
+										<li class="nav-item float-right">
+													<a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+										</li>
+								</ul>
+						
+						{% else %}
+							<div class="collapse navbar-collapse" id="navbarText">
+									 <div class="collapse navbar-collapse" id="navbarText">
+
+									 </div>
+										 <ul class="navbar-nav float-right">     
+												<li class="nav-item">
+														<a class="nav-link" href="{% url 'login' %}">Login</a>
+												</li>
+										</ul>
+						</div>
+						{% endif %}
+				
+						</nav>
+
+		<div id= "startingAnnouncements">
+			<div class = "container">
+				<br>
+				<h1>Dashboard</h1>
+				<hr>
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAnnouncementModal">Create Announcement</button>
+				<h2>Announcements</h2><!--Announcement section -->
+				<div class="alert alert-primary alert-dismissible fade show" role="alert" v-for="announcement in announcements">
+					<div class="card" >
+					  <h5 class="card-header">${ announcement.announcement_title }</h5>
+					  <div class="card-body">
+					    <p class="card-text">${ announcement.announcement_text }</p>
+					    <a href="#" class="btn btn-link">Go to Full Announcement</a>
+					  </div>
+					  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					    <span aria-hidden="true">&times;</span>
+					  </button>
+					</div>
+				</div>
+				<br>
+				<div class = "row">
+
+					<div class ="col-4"><!---Creates first row for dashboard and fills it in with info--->
+						<ul class ="list-unstyled">
+							<li class="h2">Action Items</li>
+							<li class="dash"><a href ="{% url 'showTickets' %}"><span>${ activeTickets.length }</span></a> IT Tickets</li>
+							<li class="dash"><a href ="{% url 'showDirectory' %}">Directory</a></li>
+							<li class="dash">Item 4</li>
+						</ul>
+						<hr>
+						<ul class ="list-unstyled">
+							<li class="h2">Item 5</li>
+							<li class="dash">Item 6</li>
+							<li class="dash">Item 7</li>
+							<li class="dash">Item 8</li>
+						</ul>
+						<hr>
+						<ul class ="list-unstyled">
+							<li class="h2">Item 1</li>
+							<li class="dash">Item 2</li>
+							<li class="dash">Item 3</li>
+							<li class="dash">Item 4</li>
+							<li class="dash">Item 2</li>
+							<li class="dash">Item 3</li>
+							<li class="dash">Item 4</li>
+						</ul>
+					</div>
+
+					<div class ="col-4"><!---Creates second row for dashboard and fills it in with info--->
+						<ul class ="list-unstyled">
+							<li class="h2">Item 1</li>
+							<li class="dash">Item 2</li>
+							<li class="dash">Item 3</li>
+							<li class="dash">Item 4</li>
+							<li class="dash">Item 2</li>
+							<li class="dash">Item 3</li>
+							<li class="dash">Item 4</li>
+						</ul>
+						<hr>
+						<ul class ="list-unstyled">
+							<li class="h2">Item 1</li>
+							<li class="dash">Item 2</li>
+							<li class="dash">Item 3</li>
+							<li class="dash">Item 4</li>
+							<li class="dash">Item 2</li>
+							<li class="dash">Item 3</li>
+							<li class="dash">Item 4</li>
+						</ul>
+					</div>
+
+					<div class ="col-4"><!---Creates third row for dashboard and fills it in with info--->
+						<ul class ="list-unstyled">
+							<li class="h2">Item 1</li>
+							<li class="dash">Item 2</li>
+							<li class="dash">Item 3</li>
+						</ul>
+						<hr>
+						<ul class ="list-unstyled">
+							<li class="h2">Item 1</li>
+							<li class="dash">Item 2</li>
+							<li class="dash">Item 3</li>
+							<li class="dash">Item 4</li>
+							<li class="dash">Item 2</li>
+							<li class="dash">Item 3</li>
+							<li class="dash">Item 4</li>
+						</ul>
+						<hr>
+						<ul class ="list-unstyled">
+							<li class="h2">Item 1</li>
+							<li class="dash">Item 2</li>
+							<li class="dash">Item 3</li>
+							<li class="dash">Item 4</li>
+						</ul>
+					</div>
+				</div>
+				 <!-- Add Announcement Modal -->
+			          <div class="modal fade" id="addAnnouncementModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+			            <div class="modal-dialog modal-lg" role="document">
+			              <div class="modal-content">
+			                <div class="modal-header">
+			                  <h5 class="modal-title" id="exampleModalLongTitle">Add New Announcement</h5>
+			                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			                    <span aria-hidden="true">&times;</span>
+			                  </button>
+			                </div>
+			                <form v-on:submit.prevent="addAnnouncement()">  <!-- Creates the form that allows you to define what makes up an Announcement -->
+			                <div class="modal-body">
+			                  <div class="container-fluid"> 
+			                    <div class="form-row"> 
+			                      <div class="form-group col-md-12"> <label for="announcement_title">Title</label>
+			                      	<input
+			                        type="text"
+			                        class="form-control"
+			                        id="announcement_title"
+			                        placeholder="Title"
+			                        v-model="newAnnouncement.announcement_title" >
+			                      </div>
+			                    </div>
+
+			                    <div class="form-row">
+			                       <div class="form-group col-md-12"> <label for="accouncement_text">Text</label>
+			                      <textarea
+			                        class="form-control"
+			                        id="accouncement_text"
+			                        placeholder="Text"
+			                        v-model="newAnnouncement.announcement_text"
+			                        required="required"
+			                        rows="3"></textarea>
+			                    </div>
+			                </div>
+			              </div>
+			            </div>
+
+			                <div class="modal-footer">
+			                  <button type="reset" class="btn btn-danger m-progress">Reset</button>
+			                  <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
+			                  <button type="submit" class="btn btn-primary">Save changes</button>
+			                </div>
+			                </form>
+			              </div>
+			            </div>
+			          </div>
+			          <!-- End of add Announcement modal -->
+
+			</div>
+		</div>
+	
+	<!-- <script src="/static/js/announcements.js"></script>  -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+
+    <script>
+    	Vue.http.headers.common['X-CSRFToken'] = "{{ csrf_token }}";
+      var startingAnnouncements = new Vue({
+        el: '#startingAnnouncements',
+        delimiters: ['${','}'],
+        data: {
+          announcements: [],
+          loading: true,
+          currentAnnouncement: {},
+          message: null,
+          newAnnouncement: { 'announcement_title': null, 'announcement_text': null},
+          search_term: '',
+          users: [],
+          tickets: [],
+          activeTickets: [],
+          resolvedTickets: [],
+        },
+        mounted: function() {
+          this.getAnnouncements();
+          this.getUsers();
+          this.getTickets();
+        },
+        methods: {
+        getTickets: function() {
+            let api_url = '/api/tickets/';
+            this.loading = true;
+            this.$http.get(api_url)
+                .then((response) => {
+                  this.tickets = response.data;
+                  for(var i = 0; i<this.tickets.length;i++){
+                  	if(this.tickets[i].ticket_status == 'Active' || this.tickets[i].ticket_status == 'On-hold'){
+                  		this.activeTickets.push(this.tickets[i]);
+                  	}else{
+                  		this.resolvedTickets.push(this.tickets[i]);
+                  	}
+                  }
+                  this.loading = false;
+                })
+                .catch((err) => {
+                  console.log(err);
+                })
+          },
+          getUsers: function() {
+            /*if(this.search_term!==''||this.search_term!==null) {
+              api_url = `/api/comment/?search=${this.search_term}`
+            }*/
+            this.loading = true;
+            this.$http.get(`/api/users/`)
+                .then((response) => {
+                  this.users = response.data;
+                  this.loading = false;
+                })
+                .catch((err) => {
+                  this.loading = false;
+                  console.log(err);
+                })
+          },
+          getAnnouncements: function() {
+            let api_url = '/api/announcements/';
+            this.loading = true;
+            this.$http.get(api_url)
+                .then((response) => {
+                  this.announcements = response.data;
+                  this.loading = false;
+                })
+                .catch((err) => {
+                  this.loading = false;
+                  console.log(err);
+                })
+          },
+          sayHello: function() {
+            window.alert('Hello!');
+          },
+          // getAnnouncement: function(id) {
+          //   this.loading = true;
+          //   this.$http.get(`/api/announcements/${id}/`)
+          //       .then((response) => {
+          //         this.currentTicket = response.data;
+          //         $("#editTicketModal").modal('show');
+          //         this.loading = false;
+          //       })
+          //       .catch((err) => {
+          //         this.loading = false;
+          //         console.log(err);
+          //       })
+          // },
+          addAnnouncement: function() {
+            this.loading = true;
+            this.$http.post('/api/announcements/',this.newAnnouncement)
+                .then((response) => {
+                  this.loading = false;
+                  this.getAnnouncements();
+                  $("#addAnnouncementModal").modal('hide');
+                })
+                .catch((err) => {
+                  this.loading = false;
+                  console.log(err);
+                })
+          }//,
+          // updateTicket: function() {
+          //   this.loading = true;
+          //   this.$http.put(`/api/tickets/${this.currentTicket.ticket_id}/`, this.currentTicket)
+          //       .then((response) => {
+          //         this.loading = false;
+          //         this.currentTicket = response.data;
+          //         this.getTickets();
+          //         $("#editTicketModal").modal('hide');
+          //       })
+          //       .catch((err) => {
+          //         this.loading = false;
+          //         console.log(err);
+          //       })
+          // },
+          // deleteTicket: function(id) {
+          //   console.log('You pressed delete');
+          //   this.loading = true;
+          //   this.$http.delete(`/api/tickets/${id}/`)
+          //       .then((response) => {
+          //         this.loading = false;
+          //         this.getTickets();
+          //       })
+          //       .catch((err) => {
+          //         this.loading = false;
+          //         console.log('This is the big error');
+          //         console.log(err);
+          //       })
+          // }
+        }
+        
+      });
+    </script>
+</body>
+</html>

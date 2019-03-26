@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+{% load static %}
+	<head>
+	    <meta charset="utf-8">
+	    <title>User</title>
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <meta name="description" content="Profile Page for specific user">
+		<meta id="token" name="token" value="{{ csrf_token }}">
+	    <meta name="keywords" content="vuejs, django, crudapp, restapi">
+	    <!-- bootstap -->
+	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+	    <style>
+            .buttons{
+                display:inline-block;
+                position:relative;
+                top:-55px;
+                left: 80%;
+                padding: 5px;
+                border: 1px solid #000000;
+            }
+            .buttons:hover{
+                border: 1.5px solid #171717;
+            }
+        </style>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="{% url 'showHome' %}">SU2SD</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                {% if user.is_authenticated %}
+                <div class="collapse navbar-collapse" id="navbarText">
+                        <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showAboutUs' %}">About Us</a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showBenefits' %}">Benefits</a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showEntries' %}">Entries</a>
+                                </li>
+                                {% if user.groups.all.0.name == "Admin" %}
+                                <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'showTeacherView' %}">Admin View</a>
+                                </li>
+                                {% endif %}		
+                        </ul>
+                        <ul class="navbar-nav">  
+                                <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Account
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{% url 'showUserInfo' user.id %}">My Profile</a>
+                                </li>   
+                                
+                                <li class="nav-item float-right">
+                                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                                </li>
+                        </ul>
+                </div>
+                {% else %}
+                <div class="collapse navbar-collapse" id="navbarText">
+                        <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'showAboutUs' %}">About Us</a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="{% url 'showBenefits' %}">Benefits</a>
+                                </li>
+                        </ul>
+                        <ul class="navbar-nav float-right">     
+                                <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                                <a class="nav-link" href="{% url 'signup' %}">Sign-Up</a>
+                                </li>
+                        </ul>
+                </div>
+					{% endif %}
+			</nav>
+	</head>
+
+
+	<body>
+	<div id = "starting">
+		<div class = "container">
+            
+			<div class = "row">
+				<h1>&emsp; {{ user_info.user.get_full_name }} </h1>
+			</div>
+			<hr>
+			<button class="btn btn-danger buttons"><a href="{% url 'showActivity' user_info.user.id %}" class="text-white">Activity</a></button>
+	        <button v-on:click="sayHello()" class="btn btn-primary buttons">View</button>
+	        <button v-on:click="sayHello()" class="btn btn-info buttons">Edit</button>
+			<div class = "row">
+				<div class = "col-8">
+					<p><strong>Room: </strong>{{ user_info.room_number }}</p>
+					<p><strong>Phone Number: </strong>{{ user_info.phone_number }}</p>
+					<p><strong>Email Address: </strong>{{ user_info.user.email }}</p>
+					<p><strong>IBBR Department: </strong>{{ user_info.department }}</p>
+
+				</div>
+
+				<div class = "col-4">
+					{% if user_info.image.url != NULL %}
+					<img src = "{{ user_info.image.url }}">
+					{% endif %}
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <!-- vue.js files -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+
+      <script src="/static/js/tickets.js"></script> 
+	</body>
+
+</html>
