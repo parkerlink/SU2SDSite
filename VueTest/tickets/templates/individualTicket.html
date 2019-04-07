@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>IT Tickets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A Closer look at individual IT Tickets">
+    <meta id="token" name="token" value="{{ csrf_token }}">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="/static/css/tickets.css">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <style>
+      .bg-tan {
+        background-color: #F8F8F8;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark"><!--Starts the navbar that holds links to other pages, most notible is the login pages, and tickets -->
+      <a class="navbar-brand" href="{% url 'showHome' %}">IBBR</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'showDash' %}">Dashboard <span class="sr-only">(current)</span></a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'showArticle' %}">Articles <span class="sr-only">(current)</span></a>
+          </li>
+      
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url 'showTickets' %}">Tickets</a>
+          </li>
+      
+          <li class="nav-item">
+            <a class="nav-link" href="/admin">Admin</a>
+          </li>
+        </ul>
+      
+      {% if user.is_authenticated %} <!--Checks if a user is actually logged in, if so it'll show this -->
+        <ul class="navbar-nav">  <!--if a user is logged in it shows a dropdown of all the profile options for a person-->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{% url 'showUserInfo' user.id %}">My Profile</a>
+              <a class="dropdown-item" href="{% url 'showActivity' user.id %}">My Forms</a>
+              <a class="dropdown-item" href="#">My Groups</a>
+            </div>
+          </li>   
+
+          <li class="nav-item float-right">
+            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+          </li>
+        </ul>
+      {% else %} <!-- If a user is not logged in then it'll show this instead -->
+        <ul class="navbar-nav"> <!--Shows only the option to log in on the profile side of things -->
+          <li class="nav-item float-right">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+        </ul>
+      {% endif %}
+      </div>
+    </nav>
+    
+<div id="startComment"><!-- This indicates that vuejs can run within this div, the vue wouldn't run without this div being here -->
+  <div class="container">
+  <button type="button" class = "btn btn-link btn-lg"><a href="{% url 'showTickets' %}">Back to IT Tickets</a></button> <!-- Takes you back to the page of IT tickets -->
+    <div class="row"> <!-- Splits the page into two sections, the ticket info takes up majority of the screen and the same user tickets on the smaller side -->
+      <div class="col-9">
+      <!-- Starts showing all of the content of the ticket -->
+      <center><h1>IT TICKET: {{ ticket_info.ticket_id }}</h1></center><!-- {{  } indicates the retrieval of data from django -->
+      <button type="button" class="btn btn-primary float-right" data-toggle="modal" v-on:click="setDefaultSelected({{ticket_info.ticket_id}}, '{{ user.get_full_name }}')" data-target="#addCommentModal">Add Comment</button> <!-- When this button is clicked then it'll show the comment modal containing the new comment form -->
+      <h2 id = "commentStatusBox">Status: ${ tickets.ticket_status }</h2><br> 
+
+      <hr>
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              <h4 class="text-dark">Customer Info: {{ ticket_info.ticket_customer.user.get_full_name }}</h4>
+            </button>
+          </h5>
+        </div>
+        <!-- Shows a collapsable table full of information about the ticket customer that a person could see if they so choose, all the data is gotten through django -->
+        <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <td>Photo</td>
+                  <td>Department</td>
+                  <td>Name</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  {% if ticket_info.ticket_customer.image %}  <!-- Checks if the customer has an image, and if so it -->
+                    <td><img src=" {{ ticket_info.ticket_customer.image.url }}" height=30%></td>
+                  {% else %} <!-- If user doesn't have image it defaults to this one -->
+                    <td><img src="https://outreachwebseo.com/wp-content/uploads/2016/07/blank-profile.png" height=30%></td>
+                  {% endif %}
+                  <td>
+                  <ul>
+                    {% if ticket_info.ticket_customer.department %}
+                      <li>{{ ticket_info.ticket_customer.department }}</li>
+                    {% endif %}
+                  </ul>
+                </td>
+                <td>{{ ticket_info.ticket_customer.user.get_full_name }}<br>{{ ticket_info.ticket_customer.room_number }} Shady Grove<br>{{ ticket_info.ticket_customer.phone_number }}<br>{{ ticket_info.ticket_customer.user.email }}</td>
+              </tr>
+              </tbody>
+            </table> 
+          </div>
+        </div>
+      </div>
+      <br>
+      <!-- End of all the table info for the customer -->
+      <div>
+        <h4>Tech Info: {{ ticket_info.ticket_tech.user.get_full_name }}</h4>
+      </div>
+      <br>
+      <div class="border border-dark rounded description">
+        <h5 class = "description">Description:</h5>
+        <h6 class = "description"> {{ ticket_info.ticket_desc }}</h6>
+      </div>
+      <!-- End of all ticket info -->
+      <!-- Start of showing all the comments info -->
+      <h2>Comments: <span v-if="comments.length == 0">None</span></h2>
+        <div class="row description" v-for = "comment in comments"> <!-- Gets comments array from Vue and it loops through and shows each comment on that ticket with ${ } -->
+          <div class="col-md-12">            
+            <div class="media-body rounded"> 
+            <h3 class="mt-0 commentTitle rounded-top">${ comment.comment_auth } wrote on ${ comment.comment_time.substr(0, 10) } - ${ comment.comment_time.substr(27,5) } <span class="float-right text-warning">${ comment.comment_status } </span></h3>
+            <div class = "commentText">
+              <h5>${ comment.comment_text }</h5>
+            </div>
+            </div>
+          </div>
+        </div>
+        <!-- End of all the comments shown -->
+      </div>            
+      <!-- Shows all of the tickets from the same customer that have him listed as customer -->
+      <div class="col-3">
+        <div class="rounded bg-tan border border-dark">
+          <h3>Other Tickets from this Customer: </h3>
+          <div v-for="ticket in allTickets" v-if="ticket.ticket_customer.user.first_name == tickets.ticket_customer.user.first_name && ticket.ticket_customer.user.last_name == tickets.ticket_customer.user.last_name && ticket.ticket_id != tickets.ticket_id"> <!-- goes through loop and only shows the ticket where the customer matches -->
+            <p>T-${ ticket.ticket_id }</p>
+            <p class="ticket_text">${ ticket.ticket_desc.substr(0, 75) }</p>
+            <button class="btn btn-link"><a v-bind:href="'/tickets/content/' + ticket.ticket_id">Show More Info</a></button>
+            <hr>                                                                                                   
+          </div>             
+        </div>
+      </div>
+      <!-- End of all the tickets from the same customer -->
+
+
+
+<!-- Add Comment Modal -->
+      <div class="modal fade" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Add Comment</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+              <form v-on:submit.prevent="addComment()"><!-- Starts the form of creating a new ticket -->
+                <div class="modal-body">
+                  <div class="container-fluid"> 
+                    <div class="form-row"> 
+                      <div class="form-group col-md-5"> <label for="ticket_comment.comment_status">Status</label><!-- v-model indicates what field is being filled that is created in comment model -->
+                        <input
+                        list="browsers"
+                        class="form-control"
+                        id="ticket_comment.comment_status"
+                        placeholder="Status"
+                        v-model="newComment.comment_status" 
+                        required= "required"
+                        name = "browser" >
+                        <datalist id="browsers"><!-- Fills the list with the status's provided from the comment model -->
+                          {% for status in status_opt %}
+                            <option> {{ status.1 }}</option> 
+                          {% endfor %}
+                        </datalist> 
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-lg-12"> <label for="ticket_comment.comment_text">Comment:</label> <!-- Creates textarea for comment that you can fill in with information  -->
+                        <textarea
+                        class="form-control"
+                        id="ticket_comment.comment_text"
+                        placeholder="Enter Description"
+                        v-model="newComment.comment_text"
+                        required="required"
+                        rows="3"></textarea>
+                      </div>
+                    </div>
+                    <div class="form-row"> <!-- There's a function called in Vue that autofills these two fields, and they are hidden from the user so they don't need to fill it in -->
+                      <input type="hidden" class="form-control" id="ticket_comment.ticket_id" v-model="newComment.ticket">
+                      <input type="hidden" class="form-control" id="ticket_comment.comment_auth" v-model="newComment.comment_auth">
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="reset" class="btn btn-danger m-progress">Reset</button>
+                  <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
+                  <button type="submit" v-on:click="updateTicketStatus(tickets)" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+          </div>
+        </div>
+        <div class="loading" v-if="loading===true">Loading&#8230;</div>
+      </div>
+<!-- End of add Comment modal -->
+  </div>
+</div>
+  
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <script src="/static/js/individualTickets.js"></script> 
+  </body>
+
+</html>

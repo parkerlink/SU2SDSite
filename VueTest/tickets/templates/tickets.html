@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>IT Tickets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A collection of created IT Tickets">
+    <meta id="token" name="token" value="{{ csrf_token }}">
+
+    <meta name="keywords" content="vuejs, django, crudapp, restapi">
+    <!-- bootstap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/css/tickets.css">
+
+    <style>
+      .headerBox{
+        background-color: #707B7B;
+        bottom:0;
+        float:right;
+        max-width: 100%;
+        height:50px;
+        margin-top: auto;
+      }
+      .bg-header{
+        background-color: #F8F8F8;
+        border-color: black;
+        border-style: solid;
+        border-width: thin;
+        margin-top: 20px;
+        margin-bottom: 20px;
+
+      }
+    </style>
+
+  </head>
+  <body>
+
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+         <a class="navbar-brand" href="{% url 'showHome' %}">IBBR</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'showDash' %}">Dashboard <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'showArticle' %}">Articles <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item active">
+                <a class="nav-link" href="{% url 'showTickets' %}">Tickets</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/admin">Admin</a>
+              </li>
+            </ul>
+            {% if user.is_authenticated %}
+
+                  <ul class="navbar-nav">  
+                   <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Account
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="{% url 'showUserInfo' user.id %}">My Profile</a>
+                  <a class="dropdown-item" href="{% url 'showActivity' user.id %}">My Forms</a>
+                  <a class="dropdown-item" href="#">My Groups</a>
+              </li>   
+                        
+                  <li class="nav-item float-right">
+                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                  </li>
+              </ul>
+              {% else %}
+                  <ul class="navbar-nav">     
+                  <li class="nav-item float-right">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                  </li>
+              </ul>
+              {% endif %}
+        </nav>
+
+<div id="starting">
+ <div class = "container">
+        <div class="row">
+          <h1>All IT Tickets
+          <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#addTicketModal">Create New IT Ticket</button>
+          </h1> &emsp;
+        </div>
+        <br>
+        <div class="row">
+          <div class="form-inline my-2 my-lg-0" style="margin-left: 30%;">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" v-model="search_term" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click.prevent="getTickets()">Search</button>
+          </div>
+        </div>
+        <br>
+
+        <h2>Active IT Tickets: </h2><br>
+          <div class="row">
+            <div class="col-sm-4" v-for="ticket in tickets" v-if="ticket.ticket_status == 'Active'">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Customer: ${ticket.ticket_customer.user.first_name} ${ticket.ticket_customer.user.last_name}</h5>
+                  <h5 class="card-title">Tech: <!--${ticket.ticket_customer.user.first_name} ${ticket.ticket_customer.user.last_name}--> <span v-if="ticket.ticket_tech == null">Nobody assigned</span>
+                    <span v-else>${ticket.ticket_tech.user.first_name} ${ticket.ticket_tech.user.last_name}</span></h5>
+                    <h5 class="card-title">Status: ${ticket.ticket_status}</h5>
+
+                    <p class="card-text">${ticket.ticket_desc}</p>
+                    <button class="btn btn-info" v-on:click="getTicket(ticket.ticket_id)">Edit</button>
+                    <button class="btn btn-danger" v-on:click="deleteTicket(ticket.ticket_id)">Delete</button>
+                    <button class="btn btn-link"><a v-bind:href="'/tickets/content/' + ticket.ticket_id">View Full Ticket</a></button>
+                </div>
+              </div>
+              <br>
+            </div>
+          </div>
+          <h2>On-hold IT Tickets: </h2><br>
+          <div class="row">
+            <div class="col-sm-4" v-for="ticket in tickets" v-if="ticket.ticket_status == 'On-hold'">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Customer: ${ticket.ticket_customer.user.first_name} ${ticket.ticket_customer.user.last_name}</h5>
+                  <h5 class="card-title">Tech: <!--${ticket.ticket_customer.user.first_name} ${ticket.ticket_customer.user.last_name}--> <span v-if="ticket.ticket_tech == null">Nobody assigned</span>
+                    <span v-else>${ticket.ticket_tech.user.first_name} ${ticket.ticket_tech.user.last_name}</span></h5>
+                    <h5 class="card-title">Status: ${ticket.ticket_status}</h5>
+
+                    <p class="card-text">${ticket.ticket_desc}</p>
+                    <button class="btn btn-info" v-on:click="getTicket(ticket.ticket_id)">Edit</button>
+                    <button class="btn btn-danger" v-on:click="deleteTicket(ticket.ticket_id)">Delete</button>
+                    <button class="btn btn-link"><a v-bind:href="'/tickets/content/' + ticket.ticket_id">View Full Ticket</a></button>
+                </div>
+              </div>
+              <br>
+            </div>
+          </div>
+          <h2>Resolved IT Tickets: </h2> <br>
+          <div class="row">
+            <div class="col-sm-4" v-for="ticket in tickets" v-if="ticket.ticket_status == 'Resolved'">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Customer: ${ticket.ticket_customer.user.first_name} ${ticket.ticket_customer.user.last_name}</h5>
+                  <h5 class="card-title">Tech: <!--${ticket.ticket_customer.user.first_name} ${ticket.ticket_customer.user.last_name}--> <span v-if="ticket.ticket_tech == null">Nobody assigned</span>
+                    <span v-else>${ticket.ticket_tech.user.first_name} ${ticket.ticket_tech.user.last_name}</span></h5>
+                    <h5 class="card-title">Status: ${ticket.ticket_status}</h5>
+
+                    <p class="card-text">${ticket.ticket_desc}</p>
+                    <button class="btn btn-info" v-on:click="getTicket(ticket.ticket_id)">Edit</button>
+                    <button class="btn btn-danger" v-on:click="deleteTicket(ticket.ticket_id)">Delete</button>
+                    <button class="btn btn-link"><a v-bind:href="'/tickets/content/' + ticket.ticket_id">View Full Ticket</a></button>
+                </div>
+              </div>
+              <br>
+            </div>
+          </div>
+          <!-- Add Ticket Modal -->
+          <div class="modal fade" id="addTicketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Add New Ticket</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form v-on:submit.prevent="addTicket()">
+                <div class="modal-body">
+                  <div class="container-fluid"> <!---Added--->
+                    <div class="form-row"> <!---Added--->
+                      <div class="form-group col-md-5"> <label for="ticket_status">Ticket Status</label>
+                        <input
+                        list="browsers"
+                        class="form-control"
+                        id="ticket_status"
+                        placeholder="Ticket Status"
+                        v-model="newTicket.ticket_status" 
+                        required= "required"
+                        name = "browser" >
+                          <datalist id="browsers">
+                            {% for status in status_opt %}
+                               <option> {{ status.1 }}</option> 
+                            {% endfor %}
+                          </datalist> 
+
+
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                       <div class="form-group col-md-6"> <label for="ticket_tech">Assigned Tech</label>
+                       <select class="form-control" id="ticket_tech" v-model="newTicket.ticket_tech_id">
+                          {% for user in user_list %}
+                            {% if user.department == "IT" %}
+                              <option value="{{ user.id }}">{{ user.user.get_full_name }} {{ user.id }} {{ user.user.id }}</option>
+                              {% endif %}
+                          {% endfor %}
+                        </select>
+                    </div>
+
+
+                      <div class="form-group col-md-6"><label for="ticket_customer">Customer</label>
+                       <select class="form-control" id="ticket_customer" v-model="newTicket.ticket_customer_id">
+                          {% for user in user_list %}
+                              <option value="{{ user.id }}">{{ user.user.get_full_name }} {{ user.id }} {{ user.user.id }}</option>
+                          {% endfor %}
+                        </select> 
+                    </div>
+                  </div>
+
+                    <div class="form-row"><!---Added--->
+                      <div class="form-group col-lg-12"> <label for="ticket_desc">Description</label>
+
+                      <textarea
+                        class="form-control"
+                        id="ticket_desc"
+                        placeholder="Enter Description"
+                        v-model="newTicket.ticket_desc"
+                        required="required"
+                        rows="3"></textarea>
+                    </div>
+                </div>
+              </div>
+            </div>
+
+                <div class="modal-footer">
+                  <button type="reset" class="btn btn-danger m-progress">Reset</button>
+                  <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+                </form>
+              </div>
+            </div>
+            <div class="loading" v-if="loading===true">Loading&#8230;</div>
+          </div>
+          <!-- End of add Ticket modal -->
+
+          <!-- Edit Ticket Modal -->
+          <div class="modal fade" id="editTicketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">EDIT TICKET</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form v-on:submit.prevent="updateTicket()">
+                <div class="modal-body">
+                  <div class="container-fluid"> <!---Added--->
+                      <div class="form-row"> <!---Added--->
+                            <div class="form-group col-md-5"><label for="ticket_status">Ticket Status</label>
+                            <input
+                              list="browsers"
+                              class="form-control"
+                              id="ticket_status"
+                              placeholder="Ticket Status"
+                              v-model="currentTicket.ticket_status" 
+                              required= "required"
+                              name = "browser" >
+                                 
+                          </div>
+                        </div>
+                        
+                    <div class="form-row">
+                      <div class="form-group col-md-6"> <label for="ticket_tech">Assigned Tech</label>
+                        <select class="form-control" id="ticket_tech" v-model="currentTicket.ticket_tech_id">
+                            <option value="0">Nobody!</option>
+                            {% for user in user_list %}
+                              {% if user.department == "IT" %}
+                              <option value="{{ user.id }}">{{ user.user.get_full_name }} {{ user.id }} {{ user.user.id }}</option>
+                              {% endif %}
+                            {% endfor %}
+                          </select>
+                      </div>
+
+                      <div class="form-group col-md-6"><label for="ticket_customer">Customer</label>
+                        <select class="form-control" id="ticket_customer" v-model="currentTicket.ticket_customer_id">
+                          {% for user in user_list %}
+                              <option value="{{ user.id }}">{{ user.user.get_full_name }} {{ user.id }} {{ user.user.id }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                        
+                        <div class="form-row">
+                          <div class="form-group col-md-12"><label for="ticket_desc">Description</label>
+                            <textarea
+                              class="form-control"
+                              id="ticket_desc"
+                              placeholder="Enter Description"
+                              v-model="currentTicket.ticket_desc"
+                              required="required"
+                              rows="3"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <div class="modal-footer">
+                  <button type="reset" class="btn btn-danger m-progress">Reset</button>
+                  <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+                </form>
+              </div>
+            </div>
+            <div class="loading" v-if="loading===true">Loading&#8230;</div>
+          </div>
+          <!-- End of edit article modal -->
+          
+      </div>
+      <div class="loading" v-if="loading===true">Loading&#8230;</div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <!--<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
+
+      <script src="/static/js/tickets.js"></script> 
+  </body>
+
+</html>
